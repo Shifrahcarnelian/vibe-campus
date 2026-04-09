@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Notice Board</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Pacifico&display=swap');
+
+    body {
+      font-family: 'Georgia', sans-serif;
+      background: linear-gradient(to bottom right, #ffeef2, #e1f4f8);
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      font-family: 'Merriweather';
+      font-size: 40px;
+      text-align: center;
+      color: #664024;
+      margin-bottom: 20px;
+    }
+
+    #board {
+      background-color: #c78c49;
+      border: 14px solid #693a22;
+      border-radius: 18px;
+      width: 90%;
+      height: 80vh;
+      margin: auto;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.25);
+    }
+
+    .note, .white-paper, .lined-paper {
+      position: absolute;
+      padding: 12px;
+      min-width: 120px;
+      min-height: 100px;
+      cursor: move;
+      box-shadow: 3px 3px 10px rgba(0,0,0,0.2);
+      border-radius: 10px;
+      resize: both;
+      overflow: auto;
+      user-select: none;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    .note {
+      background-color: #fff172;
+      border: 2px dashed #ecc03d;
+    }
+
+    .white-paper {
+      background-color: #fff;
+      width: 180px;
+      height: 140px;
+      border: 1px solid #ddd;
+    }
+
+    .lined-paper {
+      background: repeating-linear-gradient(#fff, #fff 28px, #b0c4de 29px);
+      border: 1px solid #2c3d54;
+    }
+
+    .controls {
+      text-align: center;
+      margin: 15px;
+    }
+
+    button {
+      margin: 5px;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #8d5b48;
+      color: white;
+      font-family: 'Quicksand', sans-serif;
+      cursor: pointer;
+      box-shadow: 1px 1px 5px rgba(0,0,0,0.1);
+    }
+
+    button:hover {
+      background-color: #8f6c5c;
+    }
+
+    .crayon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      margin: 5px;
+      display: inline-block;
+      cursor: pointer;
+      border: 2px solid #555;
+    }
+
+    #canvasContainer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .thumbtack {
+      width: 24px;
+      height: 24px;
+      position: absolute;
+      top: -12px;
+      left: calc(50% - 12px);
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+  <h1>Community Notice Board</h1>
+
+  <div class="controls">
+    <button onclick="addStickyNote()">Add Sticky Note</button>
+    <button onclick="addWhitePaper()">Add White Paper</button>
+    <button onclick="addLinedPaper()">Add Lined Paper</button>
+    <button onclick="clearCanvas()">Eraser</button>
+    <div>
+      <div class="crayon" style="background-color: #e91e63;" onclick="selectColor('#e91e63')"></div>
+      <div class="crayon" style="background-color: #3f51b5;" onclick="selectColor('#3f51b5')"></div>
+      <div class="crayon" style="background-color: #4caf50;" onclick="selectColor('#4caf50')"></div>
+      <div class="crayon" style="background-color: #ff9800;" onclick="selectColor('#ff9800')"></div>
+    </div>
+  </div>
+
+  <div id="board">
+    <div id="canvasContainer">
+      <canvas id="drawCanvas"></canvas>
+    </div>
+  </div>
+
+  <script>
+    let selectedColor = '#000';
+    let isDrawing = false;
+    const canvas = document.getElementById('drawCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = document.getElementById('board').offsetWidth;
+    canvas.height = document.getElementById('board').offsetHeight;
+
+    canvas.addEventListener('mousedown', () => isDrawing = true);
+    canvas.addEventListener('mouseup', () => isDrawing = false);
+    canvas.addEventListener('mouseleave', () => isDrawing = false);
+    canvas.addEventListener('mousemove', draw);
+
+    function draw(e) {
+      if (!isDrawing) return;
+      ctx.fillStyle = selectedColor;
+      ctx.beginPath();
+      ctx.arc(e.offsetX, e.offsetY, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function selectColor(color) {
+      selectedColor = color;
+    }
+
+    function makeDraggable(el) {
+      let offsetX, offsetY;
+      function onMouseDown(e) {
+        if (!el.contains(e.target)) return;
+        offsetX = e.clientX - el.offsetLeft;
+        offsetY = e.clientY - el.offsetTop;
+
+        function onMouseMove(e) {
+          el.style.left = (e.clientX - offsetX) + 'px';
+          el.style.top = (e.clientY - offsetY) + 'px';
+        }
+
+        function onMouseUp() {
+          document.removeEventListener('mousemove', onMouseMove);
+          document.removeEventListener('mouseup', onMouseUp);
+        }
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+      }
+
+      el.addEventListener('mousedown', onMouseDown);
+    }
+
+    function addThumbtack(el) {
+      const pin = document.createElement('img');
+      pin.src = 'https://cdn-icons-png.flaticon.com/512/2989/2989987.png';
+      pin.className = 'thumbtack';
+      el.appendChild(pin);
+    }
+
+    function addStickyNote() {
+      const note = document.createElement('div');
+      note.className = 'note';
+      note.contentEditable = true;
+      note.style.top = '10px';
+      note.style.left = '10px';
+      document.getElementById('board').appendChild(note);
+      makeDraggable(note);
+      addThumbtack(note);
+    }
+
+    function addWhitePaper() {
+      const paper = document.createElement('div');
+      paper.className = 'white-paper';
+      paper.contentEditable = true;
+      paper.style.top = '10px';
+      paper.style.left = '200px';
+      document.getElementById('board').appendChild(paper);
+      makeDraggable(paper);
+      addThumbtack(paper);
+    }
+
+    function addLinedPaper() {
+      const lined = document.createElement('div');
+      lined.className = 'lined-paper';
+      lined.contentEditable = true;
+      lined.style.top = '10px';
+      lined.style.left = '400px';
+      document.getElementById('board').appendChild(lined);
+      makeDraggable(lined);
+      addThumbtack(lined);
+    }
+  </script>
+</body>
+</html>

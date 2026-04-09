@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Avatar Capture - VibeCampus</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="avatar.css">
+</head>
+<body>
+
+<div class="container">
+  <h1>Create Your Avatar 👤</h1>
+  <p>Stand in front of your webcam and take a picture to generate your avatar.</p>
+
+  <div class="webcam-section">
+    <video id="webcam" autoplay playsinline></video>
+    <canvas id="snapshotCanvas"></canvas>
+    <button onclick="capture()">📸 Capture</button>
+  </div>
+
+  <div class="avatar-preview" id="avatarPreview">
+    <h2>Your Generated Avatar</h2>
+    <img id="avatarImage" src="" alt="Your Avatar" />
+    <button onclick="saveAvatar()">✅ Use this Avatar</button>
+  </div>
+</div>
+
+<script>
+  const video = document.getElementById('webcam');
+  const canvas = document.getElementById('snapshotCanvas');
+  const avatarImg = document.getElementById('avatarImage');
+  const preview = document.getElementById('avatarPreview');
+  const context = canvas.getContext('2d');
+
+  // Start webcam stream
+  navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+    video.srcObject = stream;
+  });
+
+  function capture() {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Get image as base64
+    const dataURL = canvas.toDataURL('image/png');
+
+    // Optional: Hash the image to generate unique avatar
+    const hash = btoa(dataURL).slice(0, 10); // Short hash
+    const avatarURL = `https://robohash.org/${hash}?set=set4`; // Set4 = cats (funny avatars)
+
+    // Display avatar
+    avatarImg.src = avatarURL;
+    preview.style.display = 'block';
+  }
+
+  function saveAvatar() {
+  const src = avatarImg.src;
+  localStorage.setItem('studentAvatar', src);
+  alert('✅ Avatar saved! You will now see it in your dashboard.');
+  window.location.href = "personalized-dashboard.html";
+}
+
+  
+</script>
+
+</body>
+</html>

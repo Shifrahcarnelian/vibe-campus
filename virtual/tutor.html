@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tutor Preference - VibeCampus</title>
+  <link rel="stylesheet" href="tutor.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- STEP 1: Tutor Login -->
+<div class="container active" id="loginPage">
+  <h1 class="title">Tutor Login</h1>
+  <p class="subtitle">Enter your college email to continue</p>
+  <input type="email" id="tutorEmail" placeholder="e.g. tutor@college.edu">
+  <button onclick="goToTutorDomain()">Continue</button>
+</div>
+
+<!-- STEP 2: Domain Preference -->
+<div class="container" id="domainPage">
+  <h1 class="title">Select Your Teaching Domain</h1>
+  <p class="subtitle">What will you tutor in?</p>
+  <select id="tutorDomainSelect">
+    <option value="">-- Select a Domain --</option>
+    <option>Artificial Intelligence</option>
+    <option>Machine Learning</option>
+    <option>Cloud Computing</option>
+    <option>Cybersecurity</option>
+    <option>Data Science</option>
+    <option>Web Development</option>
+    <option>Mobile App Development</option>
+    <option>Blockchain</option>
+    <option>IoT (Internet of Things)</option>
+    <option>DevOps</option>
+    <option>AR/VR</option>
+    <option>Game Development</option>
+  </select>
+  <button onclick="goToTutorDashboard()">Go to Dashboard</button>
+</div>
+
+<!-- STEP 3: Tutor Dashboard -->
+<div class="container" id="tutorDashboard">
+  <h1 class="title">Welcome to Your Tutor Dashboard</h1>
+  <p class="subtitle" id="tutorDomainSummary"></p>
+
+  <div class="dashboard">
+    <div class="card"><h3>📘 PeerBridge</h3><p>Help matched students in your domain.</p></div>
+    <div class="card"><h3>📅 Book Sessions</h3><p>Schedule 1-on-1 tutoring sessions.</p></div>
+    <div class="card"><h3>⭐ Feedback & Ratings</h3><p>View student feedback and improve.</p></div>
+    <div class="card"><h3>👨‍🏫 Teaching Profile</h3><p>Manage bio, skills, availability.</p></div>
+    <div class="card"><h3>🎓 Club Participation</h3><p>Engage with learning clubs & forums.</p></div>
+    <div class="card"><h3>🔥 Continuous Engagement</h3><p>Track your impact & level up.</p></div>
+  </div>
+</div>
+
+<script>
+  function goToTutorDomain() {
+    const email = document.getElementById("tutorEmail").value;
+    if (!email || !email.endsWith("@college.edu")) {
+      alert("Please enter a valid college email (e.g. tutor@college.edu).");
+      return;
+    }
+    document.getElementById("loginPage").style.display = "none";
+    document.getElementById("domainPage").style.display = "block";
+  }
+
+  function goToTutorDashboard() {
+    const domain = document.getElementById("tutorDomainSelect").value;
+    if (domain === "") {
+      alert("Please select your teaching domain.");
+      return;
+    }
+    document.getElementById("domainPage").style.display = "none";
+    document.getElementById("tutorDashboard").style.display = "block";
+    document.getElementById("tutorDomainSummary").innerText = `Teaching Domain: ${domain}`;
+  }
+</script>
+
+</body>
+</html>

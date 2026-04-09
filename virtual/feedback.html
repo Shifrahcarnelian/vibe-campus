@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teacher Feedback</title>
+  <link rel="stylesheet" href="feedback.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      width: 100%;
+      max-width: 500px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: #333;
+    }
+    select, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #4F46E5;
+      color: white;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .question {
+      display: none;
+    }
+    .question.active {
+      display: block;
+    }
+    .thank-you {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 500;
+      color: #4CAF50;
+    }
+    .option {
+      margin: 8px 0;
+      padding: 10px;
+      background: #f1f1f1;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .option:hover {
+      background: #e0e0ff;
+    }
+    .option.selected {
+      background: #dfe3ff;
+      border-color: #4F46E5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Teacher Feedback</h2>
+
+    <!-- Teacher Select -->
+    <div id="teacherSelect">
+      <label for="teacher">Choose your teacher</label>
+      <select id="teacher">
+        <option value="">-- Select a teacher --</option>
+        <option value="Mr. Sharma">Mr. Sharma</option>
+        <option value="Ms. Rani">Ms. Rani</option>
+        <option value="Mrs. Joseph">Mrs. Joseph</option>
+      </select>
+      <button onclick="startFeedback()">Start Feedback</button>
+    </div>
+
+    <!-- Feedback Form -->
+    <div id="feedbackForm" style="display:none;">
+      <div id="questionContainer"></div>
+      <button id="nextBtn" onclick="nextQuestion()" disabled>Next</button>
+    </div>
+
+    <!-- Thank You Message -->
+    <div id="done" class="thank-you" style="display:none;">
+      <p>🎉 Thank you for your feedback!</p>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        q: "How well does the teacher explain concepts?",
+        options: ["Very Well", "Well", "Average", "Poor"]
+      },
+      {
+        q: "Are the sessions interactive?",
+        options: ["Always", "Sometimes", "Rarely", "Never"]
+      },
+      {
+        q: "Does the teacher clarify doubts effectively?",
+        options: ["Yes", "Somewhat", "No", "Not Applicable"]
+      },
+      {
+        q: "Is the teacher punctual and regular?",
+        options: ["Always", "Mostly", "Sometimes", "Rarely"]
+      },
+      {
+        q: "How is the teacher's communication style?",
+        options: ["Excellent", "Good", "Average", "Poor"]
+      },
+      {
+        q: "Does the teacher give timely feedback?",
+        options: ["Always", "Often", "Rarely", "Never"]
+      },
+      {
+        q: "Are the lectures engaging and organized?",
+        options: ["Yes", "Somewhat", "No", "Not Sure"]
+      },
+      {
+        q: "Does the teacher use relevant examples?",
+        options: ["Frequently", "Sometimes", "Rarely", "Never"]
+      },
+      {
+        q: "Is the course content well structured?",
+        options: ["Yes", "Partially", "No", "Not Sure"]
+      },
+      {
+        q: "Overall, how satisfied are you with this teacher?",
+        options: ["Very Satisfied", "Satisfied", "Neutral", "Dissatisfied"]
+      }
+    ];
+
+    let current = 0;
+    let answers = [];
+
+    function startFeedback() {
+      const selected = document.getElementById("teacher").value;
+      if (!selected) {
+        alert("Please select a teacher.");
+        return;
+      }
+      document.getElementById("teacherSelect").style.display = "none";
+      document.getElementById("feedbackForm").style.display = "block";
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const container = document.getElementById("questionContainer");
+      container.innerHTML = '';
+      const q = questions[current];
+      const qDiv = document.createElement("div");
+      qDiv.className = "question active";
+      qDiv.innerHTML = `<p><strong>Q${current + 1}:</strong> ${q.q}</p>`;
+
+      q.options.forEach(option => {
+        const btn = document.createElement("div");
+        btn.className = "option";
+        btn.innerText = option;
+        btn.onclick = function() {
+          document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+          btn.classList.add('selected');
+          document.getElementById("nextBtn").disabled = false;
+        };
+        qDiv.appendChild(btn);
+      });
+
+      container.appendChild(qDiv);
+      document.getElementById("nextBtn").disabled = true;
+    }
+
+    function nextQuestion() {
+      const selected = document.querySelector('.option.selected');
+      if (!selected) return;
+      answers.push(selected.innerText);
+      current++;
+      if (current < questions.length) {
+        showQuestion();
+      } else {
+        document.getElementById("feedbackForm").style.display = "none";
+        document.getElementById("done").style.display = "block";
+        console.log("Feedback submitted:", answers);
+        // Send to backend or store if needed
+      }
+    }
+  </script>
+</body>
+</html>

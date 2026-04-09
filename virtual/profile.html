@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile & Preferences - VibeCampus</title>
+    <link rel="stylesheet" href="profile.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="success-message" id="successMessage">
+            <div class="success-content">
+                <svg class="success-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 12l2 2 4-4"/>
+                    <circle cx="12" cy="12" r="10"/>
+                </svg>
+                <span>Profile preferences saved successfully!</span>
+            </div>
+        </div>
+
+        <div class="header">
+            <button class="back-btn" onclick="goBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="m12 19-7-7 7-7"/>
+                    <path d="M19 12H5"/>
+                </svg>
+                Back to Dashboard
+            </button>
+            <h1 class="page-title">Profile & Preferences</h1>
+            <p class="page-subtitle">Customize your learning experience</p>
+            <div class="auto-save-indicator" id="autoSaveIndicator">
+                <span class="auto-save-text">Auto-saved</span>
+            </div>
+        </div>
+
+        <form class="profile-form" id="profileForm">
+           
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">👤 Personal Information</h2>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="student@college.edu" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+1 (555) 123-4567">
+                    </div>
+                    <div class="form-group">
+                        <label for="college">College/University</label>
+                        <input type="text" id="college" name="college" placeholder="Your institution name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="year">Academic Year</label>
+                        <select id="year" name="year" required>
+                            <option value="">Select Year</option>
+                            <option value="freshman">Freshman (1st Year)</option>
+                            <option value="sophomore">Sophomore (2nd Year)</option>
+                            <option value="junior">Junior (3rd Year)</option>
+                            <option value="senior">Senior (4th Year)</option>
+                            <option value="graduate">Graduate Student</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="major">Major/Field of Study</label>
+                        <input type="text" id="major" name="major" placeholder="e.g., Computer Science" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">🎯 Academic Interests</h2>
+                    <p class="section-description">Select your areas of interest (choose multiple)</p>
+                </div>
+                <div class="interests-grid">
+                    <label class="interest-card">
+                        <input type="checkbox" name="interests" value="ai">
+                        <span class="checkmark">🤖</span>
+                        <span class="interest-name">Artificial Intelligence</span>
+                    </label>
+                    <label class="interest-card">
+                        <input type="checkbox" name="interests" value="ml">
+                        <span class="checkmark">🧠</span>
+                        <span class="interest-name">Machine Learning</span>
+                    </label>
+                    <label class="interest-card">
+                        <input type="checkbox" name="interests" value="web">
+                        <span class="checkmark">🌐</span>
+                        <span class="interest-name">Web Development</span>
+                    </label>
+                    <label class="interest-card">
+                        <input type="checkbox" name="interests" value="mobile">
+                        <span class="checkmark">📱</span>
+                        <span class="interest-name">Mobile Development</span>
+                    </label>
+                    <label class="interest-card">
+                        <input type="checkbox" name="interests" value="data">
+                        <span class="checkmark">📊</span>
+                        <span class="interest-name">Data Science</span>
+                    </label>
+                    <label class="interest-card">
+                        <input type="checkbox" name="interests" value="cyber">
+                        <span class="checkmark">🔒</span>
+                        <span class="interest-name">Cybersecurity</span>
+                    </label>
+                    <label class="interest-card">
+                        <input type="checkbox" name="interests" value="cloud">
+                        <span class="checkmark">☁️</span>
+                        <span class="interest-name">Cloud Computing</span>
+                    </label>
+                    <label class="interest-card">
+                        <input type="checkbox" name="interests" value="blockchain">
+                        <span class="checkmark">⛓️</span>
+                        <span class="interest-name">Blockchain</span>
+                    </label>
+                    <label class="interest-card">
+                        <input type="checkbox" name="interests" value="iot">
+                        <span class="checkmark">🌐</span>
+                        <span class="interest-name">IoT</span>
+                    </label>
+                    <label class="interest-card">
+                        <input type="checkbox" name="interests" value="arvr">
+                        <span class="checkmark">🥽</span>
+                        <span class="interest-name">AR/VR</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">📚 Learning Style Preferences</h2>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="learningStyle">Preferred Learning Style</label>
+                        <select id="learningStyle" name="learningStyle" required>
+                            <option value="">Select Learning Style</option>
+                            <option value="visual">Visual Learner</option>
+                            <option value="auditory">Auditory Learner</option>
+                            <option value="kinesthetic">Kinesthetic Learner</option>
+                            <option value="reading">Reading/Writing Learner</option>
+                            <option value="mixed">Mixed Learning Style</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="studyTime">Preferred Study Time</label>
+                        <select id="studyTime" name="studyTime">
+                            <option value="">Select Time</option>
+                            <option value="early-morning">Early Morning (6-9 AM)</option>
+                            <option value="morning">Morning (9-12 PM)</option>
+                            <option value="afternoon">Afternoon (12-5 PM)</option>
+                            <option value="evening">Evening (5-9 PM)</option>
+                            <option value="night">Night (9 PM-12 AM)</option>
+                            <option value="late-night">Late Night (12-3 AM)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="sessionLength">Preferred Session Length</label>
+                        <select id="sessionLength" name="sessionLength">
+                            <option value="">Select Duration</option>
+                            <option value="15-30">15-30 minutes</option>
+                            <option value="30-60">30-60 minutes</option>
+                            <option value="60-90">1-1.5 hours</option>
+                            <option value="90-120">1.5-2 hours</option>
+                            <option value="120+">2+ hours</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="groupSize">Preferred Group Size</label>
+                        <select id="groupSize" name="groupSize">
+                            <option value="">Select Size</option>
+                            <option value="solo">Solo Study</option>
+                            <option value="pair">Pair (2 people)</option>
+                            <option value="small">Small Group (3-5 people)</option>
+                            <option value="medium">Medium Group (6-10 people)</option>
+                            <option value="large">Large Group (10+ people)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">🎯 Goals & Objectives</h2>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label for="shortTermGoals">Short-term Goals (This Semester)</label>
+                        <textarea id="shortTermGoals" name="shortTermGoals" rows="3" placeholder="e.g., Improve GPA, Learn Python, Complete certification..."></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="longTermGoals">Long-term Goals (Career Aspirations)</label>
+                        <textarea id="longTermGoals" name="longTermGoals" rows="3" placeholder="e.g., Become a software engineer, Start a tech company, Pursue PhD..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="skillLevel">Current Skill Level</label>
+                        <select id="skillLevel" name="skillLevel">
+                            <option value="">Select Level</option>
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                            <option value="expert">Expert</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="availability">Weekly Availability (Hours)</label>
+                        <select id="availability" name="availability">
+                            <option value="">Select Hours</option>
+                            <option value="1-5">1-5 hours</option>
+                            <option value="5-10">5-10 hours</option>
+                            <option value="10-15">10-15 hours</option>
+                            <option value="15-20">15-20 hours</option>
+                            <option value="20+">20+ hours</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">🔔 Notification Preferences</h2>
+                </div>
+                <div class="notification-grid">
+                    <label class="notification-item">
+                        <input type="checkbox" name="notifications" value="study-reminders" checked>
+                        <span class="checkbox-custom"></span>
+                        <div class="notification-content">
+                            <span class="notification-title">Study Reminders</span>
+                            <span class="notification-desc">Get reminded about your study sessions</span>
+                        </div>
+                    </label>
+                    <label class="notification-item">
+                        <input type="checkbox" name="notifications" value="peer-matches" checked>
+                        <span class="checkbox-custom"></span>
+                        <div class="notification-content">
+                            <span class="notification-title">Peer Matches</span>
+                            <span class="notification-desc">Notifications when matched with study partners</span>
+                        </div>
+                    </label>
+                    <label class="notification-item">
+                        <input type="checkbox" name="notifications" value="club-updates">
+                        <span class="checkbox-custom"></span>
+                        <div class="notification-content">
+                            <span class="notification-title">Club Updates</span>
+                            <span class="notification-desc">Updates from clubs you've joined</span>
+                        </div>
+                    </label>
+                    <label class="notification-item">
+                        <input type="checkbox" name="notifications" value="achievements">
+                        <span class="checkbox-custom"></span>
+                        <div class="notification-content">
+                            <span class="notification-title">Achievements</span>
+                            <span class="notification-desc">Celebrate your progress and badges</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" onclick="resetForm()">Reset Changes</button>
+                <button type="button" class="btn-secondary" onclick="loadSavedData()">Load Saved Data</button>
+                <button type="submit" class="btn-primary">
+                    <span class="btn-text">Save Preferences</span>
+                    <span class="btn-loader" style="display: none;">
+                        <svg class="spinner" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="31.416" stroke-dashoffset="31.416">
+                                <animate attributeName="stroke-dasharray" dur="2s" values="0 31.416;15.708 15.708;0 31.416" repeatCount="indefinite"/>
+                                <animate attributeName="stroke-dashoffset" dur="2s" values="0;-15.708;-31.416" repeatCount="indefinite"/>
+                            </circle>
+                        </svg>
+                        Saving...
+                    </span>
+                </button>
+            </div>
+        </form>
+
+        <div class="modal-overlay" id="dataModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3>Saved Profile Data</h3>
+                    <button class="modal-close" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-content">
+                    <pre id="dataPreview"></pre>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-secondary" onclick="exportData()">Export Data</button>
+                    <button class="btn-secondary" onclick="clearAllData()">Clear All Data</button>
+                    <button class="btn-primary" onclick="closeModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function saveProfileData(data) {
+            try {
+                localStorage.setItem('vibecampus_profile', JSON.stringify(data));
+                localStorage.setItem('vibecampus_profile_timestamp', new Date().toISOString());
+                return true;
+            } catch (error) {
+                console.error('Error saving data:', error);
+                return false;
+            }
+        }
+
+        function loadProfileData() {
+            try {
+                const data = localStorage.getItem('vibecampus_profile');
+                return data ? JSON.parse(data) : null;
+            } catch (error) {
+                console.error('Error loading data:', error);
+                return null;
+            }
+        }
+
+        function collectFormData() {
+            const formData = new FormData(document.getElementById('profileForm'));
+            const data = {
+                personalInfo: {
+                    fullName: formData.get('fullName'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone'),
+                    college: formData.get('college'),
+                    year: formData.get('year'),
+                    major: formData.get('major')
+                },
+                interests: formData.getAll('interests'),
+                learningStyle: {
+                    style: formData.get('learningStyle'),
+                    studyTime: formData.get('studyTime'),
+                    sessionLength: formData.get('sessionLength'),
+                    groupSize: formData.get('groupSize')
+                },
+                goals: {
+                    shortTerm: formData.get('shortTermGoals'),
+                    longTerm: formData.get('longTermGoals'),
+                    skillLevel: formData.get('skillLevel'),
+                    availability: formData.get('availability')
+                },
+                notifications: formData.getAll('notifications'),
+                lastUpdated: new Date().toISOString()
+            };
+            return data;
+        }
+
+        function populateForm(data) {
+            if (!data) return;
+
+            if (data.personalInfo) {
+                Object.keys(data.personalInfo).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element && data.personalInfo[key]) {
+                        element.value = data.personalInfo[key];
+                    }
+                });
+            }
+
+            if (data.interests) {
+                data.interests.forEach(interest => {
+                    const checkbox = document.querySelector(`input[name="interests"][value="${interest}"]`);
+                    if (checkbox) checkbox.checked = true;
+                });
+            }
+            if (data.learningStyle) {
+                Object.keys(data.learningStyle).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element && data.learningStyle[key]) {
+                        element.value = data.learningStyle[key];
+                    }
+                });
+            }
+
+            if (data.goals) {
+                if (data.goals.shortTerm) document.getElementById('shortTermGoals').value = data.goals.shortTerm;
+                if (data.goals.longTerm) document.getElementById('longTermGoals').value = data.goals.longTerm;
+                if (data.goals.skillLevel) document.getElementById('skillLevel').value = data.goals.skillLevel;
+                if (data.goals.availability) document.getElementById('availability').value = data.goals.availability;
+            }
+            if (data.notifications) {
+                document.querySelectorAll('input[name="notifications"]').forEach(cb => cb.checked = false);
+                data.notifications.forEach(notification => {
+                    const checkbox = document.querySelector(`input[name="notifications"][value="${notification}"]`);
+                    if (checkbox) checkbox.checked = true;
+                });
+            }
+        }
+
+        function showSuccessMessage() {
+            const successMessage = document.getElementById('successMessage');
+            successMessage.classList.add('show');
+            setTimeout(() => {
+                successMessage.classList.remove('show');
+            }, 3000);
+        }
+
+        function showAutoSaveIndicator() {
+            const indicator = document.getElementById('autoSaveIndicator');
+            indicator.classList.add('show');
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+
+        function goBack() {
+            if (confirm('Are you sure you want to leave? Any unsaved changes will be lost.')) {
+                window.history.back();
+            }
+        }
+
+        function resetForm() {
+            if (confirm('Are you sure you want to reset all changes?')) {
+                document.getElementById('profileForm').reset();
+            }
+        }
+
+        function loadSavedData() {
+            const savedData = loadProfileData();
+            if (savedData) {
+                populateForm(savedData);
+                showSuccessMessage();
+            } else {
+                alert('No saved data found.');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('dataModal').classList.remove('show');
+        }
+
+        function showDataPreview() {
+            const data = loadProfileData();
+            if (data) {
+                document.getElementById('dataPreview').textContent = JSON.stringify(data, null, 2);
+                document.getElementById('dataModal').classList.add('show');
+            } else {
+                alert('No saved data found.');
+            }
+        }
+
+        function exportData() {
+            const data = loadProfileData();
+            if (data) {
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'vibecampus-profile.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('Are you sure you want to clear all saved data? This action cannot be undone.')) {
+                localStorage.removeItem('vibecampus_profile');
+                localStorage.removeItem('vibecampus_profile_timestamp');
+                alert('All data cleared successfully.');
+                closeModal();
+                document.getElementById('profileForm').reset();
+            }
+        }
+
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.querySelector('.btn-primary');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoader = submitBtn.querySelector('.btn-loader');
+            
+            btnText.style.display = 'none';
+            btnLoader.style.display = 'flex';
+            submitBtn.disabled = true;
+            
+            
+            const formData = collectFormData();
+            
+            setTimeout(() => {
+                const success = saveProfileData(formData);
+                
+                
+                btnText.style.display = 'block';
+                btnLoader.style.display = 'none';
+                submitBtn.disabled = false;
+                
+                if (success) {
+                    showSuccessMessage();
+                    console.log('Profile data saved:', formData);
+                } else {
+                    alert('Error saving profile data. Please try again.');
+                }
+            }, 1500);
+        });
+
+        let autoSaveTimeout;
+        const formInputs = document.querySelectorAll('input, select, textarea');
+        
+        formInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                clearTimeout(autoSaveTimeout);
+                autoSaveTimeout = setTimeout(() => {
+                    const formData = collectFormData();
+                    if (saveProfileData(formData)) {
+                        showAutoSaveIndicator();
+                        console.log('Auto-saved profile data');
+                    }
+                }, 3000);
+            });
+        });
+
+        window.addEventListener('load', () => {
+            const savedData = loadProfileData();
+            if (savedData) {
+                populateForm(savedData);
+                console.log('Loaded saved profile data');
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 's':
+                        e.preventDefault();
+                        document.getElementById('profileForm').dispatchEvent(new Event('submit'));
+                        break;
+                    case 'd':
+                        e.preventDefault();
+                        showDataPreview();
+                        break;
+                }
+            }
+        });
+        document.querySelector('.form-actions').insertAdjacentHTML('afterbegin', 
+            '<button type="button" class="btn-secondary" onclick="showDataPreview()">View Saved Data</button>'
+        );
+    </script>
+</body>
+</html>

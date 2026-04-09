@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Skill Exchange</title>
+  <link rel="stylesheet" href="study.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f0f6ff;
+      color: #0a2f5c;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .dark-mode {
+      background-color: #0a2f5c;
+      color: #ffffff;
+    }
+    .toggle-container {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 28px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 28px;
+    }
+
+    .slider:before {
+      content: "";
+      position: absolute;
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      border-radius: 50%;
+      transition: .4s;
+    }
+
+    input:checked + .slider {
+      background-color: #0077cc;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(22px);
+    }
+
+    .student-card {
+      border: 2px solid #0077cc;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+      background-color: #ffffff;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      transition: transform 0.2s;
+    }
+
+    .dark-mode .student-card {
+      background-color: #11345f;
+      border-color: #5daeff;
+    }
+
+    .student-card:hover {
+      transform: scale(1.01);
+    }
+
+    .profile-pic {
+      width: 60px;
+      height: 60px;
+      background: #0077cc;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .profile-pic img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .student-info {
+      flex-grow: 1;
+    }
+
+    .calendar, select {
+      margin-top: 10px;
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid #0077cc;
+      width: 100%;
+    }
+
+    .btn {
+      background: #0077cc;
+      color: white;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      background: #005fa3;
+    }
+
+    .dark-mode .btn {
+      background: #5daeff;
+      color: #001d3d;
+    }
+
+    .booking-confirm {
+      margin-top: 10px;
+    }
+
+    .video-link {
+      text-decoration: none;
+      margin-top: 10px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div class="toggle-container">
+    <label class="switch">
+      <input type="checkbox" id="darkToggle" onclick="toggleDarkMode()">
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <h2>Student Skill Exchange Sessions</h2>
+  <div id="studentList"></div>
+
+  <script>
+    const students = [
+      {
+        name: "Ananya R.",
+        teach: "Large Language Models",
+        learn: "Data Visualization",
+        slots: ["10:00 AM", "11:30 AM", "2:00 PM"],
+        img: "",
+        meetRoom: "student-exchange-ananya"
+      },
+      {
+        name: "Karthik S.",
+        teach: "Prompt Engineering",
+        learn: "Public Speaking",
+        slots: ["9:30 AM", "1:00 PM", "4:00 PM"],
+        img: "",
+        meetRoom: "student-exchange-karthik"
+      },
+      {
+        name: "Meera V.",
+        teach: "UI Design in Figma",
+        learn: "Git & Version Control",
+        slots: ["8:00 AM", "12:00 PM", "3:30 PM"],
+        img: "",
+        meetRoom: "student-exchange-meera"
+      }
+    ];
+
+    function renderStudents() {
+      const list = document.getElementById("studentList");
+      list.innerHTML = "";
+      students.forEach((student, index) => {
+        const card = document.createElement("div");
+        card.className = "student-card";
+        card.innerHTML = `
+          <div class="profile-pic" id="pic-${index}">
+            ${student.img ? `<img src="${student.img}" />` : ""}
+          </div>
+          <div class="student-info">
+            <h3>${student.name}</h3>
+            <p><strong>Teaches:</strong> ${student.teach}</p>
+            <p><strong>Wants to learn:</strong> ${student.learn}</p>
+            <input type="file" accept="image/*" onchange="uploadPic(event, ${index})" />
+            <input class="calendar" type="date" id="date-${index}" />
+            <select id="time-${index}">
+              ${student.slots.map(slot => `<option value="${slot}">${slot}</option>`).join("")}
+            </select>
+            <button class="btn" onclick="book(${index})">Book Exchange</button>
+            <a class="btn video-link" href="https://meet.jit.si/${student.meetRoom}" target="_blank">Join Video Call</a>
+            <div class="booking-confirm" id="confirm-${index}"></div>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    function book(index) {
+      const date = document.getElementById(`date-${index}`).value;
+      const time = document.getElementById(`time-${index}`).value;
+      const confirmBox = document.getElementById(`confirm-${index}`);
+      if (date) {
+        confirmBox.innerHTML = `<p>✅ Exchange session booked for ${date} at ${time}</p>`;
+      } else {
+        confirmBox.innerHTML = `<p style="color:red;">Please select a date.</p>`;
+      }
+    }
+
+    function uploadPic(event, index) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        students[index].img = reader.result;
+        document.getElementById(`pic-${index}`).innerHTML = `<img src="${reader.result}" />`;
+      };
+      if (file) reader.readAsDataURL(file);
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+      const isDark = document.body.classList.contains("dark-mode");
+      localStorage.setItem("darkMode", isDark);
+    }
+
+    window.onload = () => {
+      renderStudents();
+      const saved = localStorage.getItem("darkMode");
+      if (saved === "true") {
+        document.body.classList.add("dark-mode");
+        document.getElementById("darkToggle").checked = true;
+      }
+    };
+  </script>
+</body>
+</html>

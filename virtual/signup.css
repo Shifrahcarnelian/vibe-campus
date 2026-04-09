@@ -1,0 +1,131 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f4f7fa;
+}
+
+
+.branding {
+  text-align: center;
+  margin-top: 50px;
+  margin-bottom: 20px;
+}
+
+.logo {
+  width: 50px;
+  margin-bottom: 10px;
+}
+
+.branding h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  color: #2b2e4a;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-top: 5px;
+}
+
+.auth-box {
+  width: 850px;
+  max-width: 90%;
+  margin: 60px auto 80px;
+  background: white;
+  display: flex;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.form-panel {
+  flex: 1;
+  padding: 40px 30px;
+  text-align: center;
+}
+
+.left-panel {
+  background-color: #ffffff;
+}
+
+.right-panel {
+  background: linear-gradient(to right, #a1c4fd, #c2e9fb);
+  color: #1e1e3f;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-form input {
+  display: block;
+  margin: 10px auto;
+  padding: 12px 15px;
+  width: 80%;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f5f5f5;
+}
+
+.name-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  width: 80%;
+}
+
+.name-row input {
+  width: 100%;
+}
+
+button.primary {
+  margin-top: 20px;
+  padding: 12px 30px;
+  background: #6b21a8;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+button.ghost {
+  margin-top: 20px;
+  padding: 10px 24px;
+  border: 2px solid #6b21a8;
+  color: #6b21a8;
+  background: transparent;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+}
+button.primary {
+  margin-top: 20px;
+  padding: 12px 30px;
+  background: #6b21a8;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+button.primary:hover {
+  background: #4c1d95;
+  transform: scale(1.05);
+}
+.branding {
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}

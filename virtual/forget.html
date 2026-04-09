@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password - Vibecampus</title>
+    <link rel="stylesheet" href="forget.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <div class="icon-container">
+                    <svg class="mail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                        <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                </div>
+                <h1 class="title">Forgot your password?</h1>
+                <p class="description">
+                    No worries! Enter your email address and we'll send you a link to reset your password.
+                </p>
+            </div>
+            
+            <div class="card-content">
+                <form class="form" id="forgotPasswordForm">
+                    <div class="form-group">
+                        <label for="email" class="label">Email address</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="Enter your email address" 
+                            required 
+                            class="input"
+                        >
+                    </div>
+                    <button type="submit" class="submit-btn">
+                        Send reset instructions
+                    </button>
+                </form>
+
+                <div class="back-link">
+                    <a href="signin.html" class="back-to-signin">
+                        <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m12 19-7-7 7-7"/>
+                            <path d="M19 12H5"/>
+                        </svg>
+                        Back to sign in
+                    </a>
+                </div>
+
+                <div class="help-box">
+                    <p class="help-text">
+                        <strong>Didn't receive an email?</strong> Check your spam folder or 
+                        <button type="button" class="try-again-btn">try again</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-text">
+            <p>
+                Remember your password? 
+                <a href="signin.html" class="signin-link">Sign in instead</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            
+            if (email) {
+                alert('Password reset instructions have been sent to ' + email);
+                // Here you would typically send the data to your server
+            }
+        });
+
+        document.querySelector('.try-again-btn').addEventListener('click', function() {
+            document.getElementById('email').focus();
+        });
+    </script>
+</body>
+</html>

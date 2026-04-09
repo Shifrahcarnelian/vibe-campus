@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Preference - VibeCampus</title>
+  <link rel="stylesheet" href="student.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="container active" id="loginPage">
+  <h1 class="title">Student Login</h1>
+  <p class="subtitle">Use your college email ID to continue</p>
+  <input type="email" id="email" placeholder="e.g. student@college.edu">
+  <button onclick="goToCourseSelection()">Login</button>
+</div>
+
+<div class="container" id="coursePage">
+  <h1 class="title">Select Your Preferred Domain</h1>
+  <p class="subtitle">Choose your area of interest</p>
+  <select id="domainSelect">
+    <option value="">-- Select a Domain --</option>
+    <option>Artificial Intelligence</option>
+    <option>Machine Learning</option>
+    <option>Cloud Computing</option>
+    <option>Cybersecurity</option>
+    <option>Data Science</option>
+    <option>Web Development</option>
+    <option>Mobile App Development</option>
+    <option>Blockchain</option>
+    <option>IoT (Internet of Things)</option>
+    <option>DevOps</option>
+    <option>AR/VR</option>
+    <option>Game Development</option>
+  </select>
+  <button onclick="goToDashboard()">Continue</button>
+</div>
+<div class="container" id="dashboardPage">
+  <h1 class="title">Welcome to Your VibeCampus Dashboard</h1>
+  <p class="subtitle" id="selectedDomain"></p>
+
+  <div class="dashboard">
+    <div class="card"><h3>📚 StudySpaces</h3><p>Join virtual study rooms and co-learn.</p></div>
+    <div class="card"><h3>🎯 ClubSphere</h3><p>Explore club activities, events, and challenges.</p></div>
+    <div class="card"><h3>🔁 PeerBridge</h3><p>Get matched for tutoring or collaborative learning.</p></div>
+    <div class="card"><h3>👨‍💻<a href="profile.html">Profile & Preferences</a></h3><p>Update your interests and learning style.</p></div>
+    <div class="card"><h3>⭐ Gamified Progress</h3><p>Earn badges and climb leaderboards.</p></div>
+    <div class="card"><h3>📝 Feedback & Growth</h3><p>Receive suggestions and track your progress.</p></div>
+  </div>
+</div>
+
+<script>
+  function goToCourseSelection() {
+    const email = document.getElementById("email").value;
+    if (!email || !email.endsWith("@college.edu")) {
+      alert("Please enter a valid college email (e.g. student@college.edu).");
+      return;
+    }
+
+    localStorage.setItem("studentEmail", email);
+    document.getElementById("loginPage").style.display = "none";
+    document.getElementById("coursePage").style.display = "block";
+  }
+
+  function goToDashboard() {
+    const domain = document.getElementById("domainSelect").value;
+    if (domain === "") {
+      alert("Please select your preferred domain.");
+      return;
+    }
+
+    localStorage.setItem("studentDomain", domain);
+    localStorage.setItem("loginTime", new Date().toISOString());
+
+    window.location.href = "personalized-dashboard.html";
+  }
+</script>
+
+
+  
+
+
+</body>
+</html>

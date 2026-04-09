@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>VibeCampus Adventure Study Game — 100 Levels</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root {
+      --area-w: 860px;
+      --area-h: 220px;
+    }
+    body {
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(120deg,#0f172a 0%,#031028 60%, #04293a 100%);
+      color: #f1f5f9;
+      margin: 0;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    h1 { margin: 0; font-size: 22px; letter-spacing: 0.2px; }
+    .topbar { display:flex; gap:12px; align-items:center; }
+    .controls { display:flex; gap:8px; align-items:center; }
+
+    #game-wrap {
+      width: calc(var(--area-w) + 40px);
+      max-width: calc(100% - 40px);
+    }
+
+    #health-bar {
+      width: 100%;
+      background: #284050;
+      border: 2px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      overflow: hidden;
+      height: 22px;
+      box-shadow: 0 6px 18px rgba(2,6,23,0.6) inset;
+    }
+    #health {
+      height:100%;
+      width:100%;
+      background: linear-gradient(90deg,#10b981,#34d399);
+      transition: width .5s ease, background .3s;
+    }
+    .health-text { font-size:13px; margin-top:6px; color:#cbd5e1; text-align:center; }
+
+    #game-area {
+      margin:16px auto;
+      width: var(--area-w);
+      height: var(--area-h);
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      background-image: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
+      border: 2px solid rgba(255,255,255,0.04);
+      box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+    }
+
+    /* simple repeating ground */
+    #game-area::before{
+      content:"";
+      position:absolute;
+      left:0; right:0; bottom:0; height:60%;
+      background:
+        linear-gradient(transparent 60%, rgba(0,0,0,0.06) 61%),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 40px 40px;
+      pointer-events:none;
+    }
+
+    #player {
+      width: 56px;
+      height: 56px;
+      position: absolute;
+      bottom: 14px;
+      left: 8px;
+      background-image: url('https://i.imgur.com/Z6X3zjT.png');
+      background-size: cover;
+      transition: left 0.6s cubic-bezier(.2,.9,.2,1);
+      filter: drop-shadow(0 8px 12px rgba(2,6,23,0.6));
+      z-index: 12;
+    }
+    #finish-flag {
+      position:absolute;
+      right: 12px;
+      bottom: 14px;
+      width: 44px;
+      height: 64px;
+      background: linear-gradient(180deg,#fde68a,#f59e0b);
+      border-radius:6px;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.5);
+      display:flex; align-items:center; justify-content:center;
+      font-weight:700; color:#082032; font-size:14px;
+      z-index:8;
+    }
+
+    .hud {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      width:100%;
+      margin-top:10px;
+    }
+    .level-box {
+      background: rgba(255,255,255,0.03);
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    .domain { font-size:13px; color:#e2e8f0; opacity:0.95; }
+    .level-num { font-weight:700; font-size:16px; color:#fff; }
+
+    #question-card {
+      margin-top:18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
+      padding:18px;
+      border-radius:10px;
+      width:100%;
+      max-width: var(--area-w);
+      border:1px solid rgba(255,255,255,0.03);
+      box-shadow: 0 8px 30px rgba(2,6,23,0.5);
+    }
+    .q-title { font-size:18px; margin:0 0 12px 0; color:#f8fafc; }
+    .options { display:flex; flex-wrap:wrap; gap:10px; }
+    .opt {
+      background: rgba(255,255,255,0.02);
+      padding:10px 12px;
+      border-radius:8px;
+      cursor:pointer;
+      min-width: 140px;
+      border:1px solid rgba(255,255,255,0.03);
+      text-align:center;
+      transition: transform .12s, background .12s, box-shadow .12s;
+      user-select:none;
+    }
+    .opt:hover { transform: translateY(-4px); background: rgba(255,255,255,0.03); }
+    .opt.correct { background: rgba(16,185,129,0.14); border-color: rgba(16,185,129,0.3); }
+    .opt.wrong { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.26); }
+
+    #feedback { margin-top:10px; font-weight:600; min-height:20px; }
+
+    .bottom-row { margin-top:12px; display:flex; gap:8px; align-items:center; justify-content:space-between; }
+
+    button {
+      background: linear-gradient(180deg,#0ea5b3,#0284c7);
+      color: white;
+      border: none;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor:pointer;
+      font-weight:700;
+      box-shadow: 0 8px 18px rgba(3,7,18,0.5);
+    }
+    button.secondary {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.06);
+      color:#e6eef6;
+      font-weight:600;
+    }
+    .muted { color:#93c5fd; opacity:0.9; font-size:13px; }
+
+    /* responsive */
+    @media (max-width:960px){
+      :root { --area-w: 92vw; }
+      #player { transform-origin:center; }
+    }
+  </style>
+</head>
+<body>
+  <div id="game-wrap">
+    <div class="topbar">
+      <h1>VibeCampus — Adventure Study Game (100 Levels)</h1>
+      <div style="flex:1"></div>
+      <div class="controls">
+        <button id="restartBtn" class="secondary">Restart</button>
+      </div>
+    </div>
+
+    <div style="margin-top:12px;">
+      <div id="health-bar"><div id="health"></div></div>
+      <div class="health-text" id="healthText">Health: 100%</div>
+    </div>
+
+    <div id="game-area" aria-hidden="false">
+      <div id="player" title="Your character"></div>
+      <div id="finish-flag" aria-hidden="true">🏁</div>
+    </div>
+
+    <div class="hud">
+      <div class="level-box">
+        <div class="domain" id="domainLabel">Domain</div>
+        <div class="level-num" id="levelLabel">Level 1 / 100</div>
+      </div>
+      <div style="flex:1"></div>
+      <div class="muted">Wrong answer drains 20% health • Reach level 100 to win</div>
+    </div>
+
+    <div id="question-card">
+      <div class="q-title" id="questionText">Loading...</div>
+      <div class="options" id="optionsContainer"></div>
+      <div id="feedback"></div>
+      <div class="bottom-row">
+        <div class="muted" id="progressText">Progress</div>
+        <div>
+          <button id="skipBtn" class="secondary" title="Skip level (not allowed)">Skip</button>
+          <button id="nextBtn" style="display:none">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const domains = [
+  "Artificial Intelligence",
+  "Machine Learning",
+  "Web Development",
+  "Mobile Development",
+  "Data Science",
+  "Cybersecurity",
+  "Cloud Computing",
+  "Blockchain",
+  "IoT",
+  "AR/VR"
+];
+const levels = [
+  { domain: domains[0], q: "What is the primary goal of Artificial Intelligence?", options:["To mimic human intelligence","To replace hardware","To increase file sizes","To compress data"], answer:"To mimic human intelligence" },
+  { domain: domains[1], q: "Which algorithm is commonly used for supervised classification?", options:["K-Means","Decision Tree","Apriori","DBSCAN"], answer:"Decision Tree" },
+  { domain: domains[2], q: "Which tag is used for a paragraph in HTML?", options:["<p>","<div>","<span>","<h1>"], answer:"<p>" },
+  { domain: domains[3], q: "Which language is primarily used for Android native development?", options:["Swift","Kotlin","Ruby","C#"], answer:"Kotlin" },
+  { domain: domains[4], q: "In data science, what does ETL stand for?", options:["Extract Transform Load","Execute Transfer Load","Export Transform List","Edit Test Launch"], answer:"Extract Transform Load" },
+  { domain: domains[5], q: "What is a common method for protecting passwords?", options:["Storing plaintext","Hashing","Emailing them","Printing them"], answer:"Hashing" },
+  { domain: domains[6], q: "Which service model provides virtual machines and infrastructure?", options:["SaaS","PaaS","IaaS","DaaS"], answer:"IaaS" },
+  { domain: domains[7], q: "Which blockchain property ensures entries can't be altered?", options:["Decentralization","Immutability","Scalability","Latency"], answer:"Immutability" },
+  { domain: domains[8], q: "Which protocol is commonly used to connect IoT devices?", options:["HTTP/2 only","MQTT","FTP","SMTP"], answer:"MQTT" },
+  { domain: domains[9], q: "In AR/VR, '6DoF' stands for?", options:["6 Directions of Flow","Six Degrees of Freedom","Six Design of Feature","6 Days of Function"], answer:"Six Degrees of Freedom" },
+
+  // Level 11..20
+  { domain: domains[0], q: "Which AI field focuses on language understanding?", options:["NLP","CV","RL","GAN"], answer:"NLP" },
+  { domain: domains[1], q: "Which metric is used for regression accuracy?", options:["Accuracy","Precision","Mean Squared Error","F1-score"], answer:"Mean Squared Error" },
+  { domain: domains[2], q: "Which CSS property changes text color?", options:["color","font-color","text-color","fg"], answer:"color" },
+  { domain: domains[3], q: "Which tool is used for iOS development?", options:["Android Studio","Xcode","Eclipse","Visual Studio Code"], answer:"Xcode" },
+  { domain: domains[4], q: "What is a DataFrame commonly associated with?", options:["NumPy","Pandas","Matplotlib","Flask"], answer:"Pandas" },
+  { domain: domains[5], q: "What does 'phishing' attempt to steal?", options:["Credentials","Hardware","Bandwidth","CPU cycles"], answer:"Credentials" },
+  { domain: domains[6], q: "Which cloud provider offers Lambda (serverless functions)?", options:["AWS","DigitalOcean","Linode","Oracle Cloud"], answer:"AWS" },
+  { domain: domains[7], q: "What is a 'smart contract'?", options:["A legal agreement in Word","Code executed on blockchain","A cloud VM","A mobile app"], answer:"Code executed on blockchain" },
+  { domain: domains[8], q: "What sensor measures temperature in IoT?", options:["LIDAR","Thermistor","Gyroscope","Camera"], answer:"Thermistor" },
+  { domain: domains[9], q: "VR typically requires which of the following to immerse users?", options:["Head-mounted display","Paper manual","LCD monitor only","Printer"], answer:"Head-mounted display" },
+
+  // 21..30
+  { domain: domains[0], q: "Which model type is used for image recognition?", options:["RNN","CNN","SVM","KNN"], answer:"CNN" },
+  { domain: domains[1], q: "Which technique reduces overfitting by combining many models?", options:["Bagging","Underfitting","BatchNorm","Early stopping"], answer:"Bagging" },
+  { domain: domains[2], q: "Which JavaScript keyword declares a block-scoped variable?", options:["var","let","def","int"], answer:"let" },
+  { domain: domains[3], q: "Which pattern helps manage UI state in React Native?", options:["MVC","Redux","SOAP","FTP"], answer:"Redux" },
+  { domain: domains[4], q: "Which plot is best for showing distribution of a numeric variable?", options:["Histogram","Pie chart","Network graph","Chord diagram"], answer:"Histogram" },
+  { domain: domains[5], q: "What is 'two-factor authentication' (2FA)?", options:["Two passwords","Two verification methods","Double encryption","Two users"], answer:"Two verification methods" },
+  { domain: domains[6], q: "Which service is used for object storage on AWS?", options:["S3","EC2","RDS","EBS"], answer:"S3" },
+  { domain: domains[7], q: "Which consensus algorithm uses stake to validate?", options:["PoW","PoS","RAFT","Paxos"], answer:"PoS" },
+  { domain: domains[8], q: "Which connectivity technique uses short-range personal area networking?", options:["Zigbee","Ethernet","FTP","SMTP"], answer:"Zigbee" },
+  { domain: domains[9], q: "Which tracking tech is used for head position in AR/VR?", options:["Eye tracking","Motion tracking","OCR","CGI"], answer:"Motion tracking" },
+
+  // 31..40
+  { domain: domains[0], q: "Which algorithm searches shortest paths often used in AI agents?", options:["A*","Linear Search","Bubble Sort","KNN"], answer:"A*" },
+  { domain: domains[1], q: "Which loss is used for binary classification in neural nets?", options:["MSE","Cross-Entropy","MAE","RMSLE"], answer:"Cross-Entropy" },
+  { domain: domains[2], q: "Which HTTP method is used to retrieve data?", options:["GET","POST","PUT","DELETE"], answer:"GET" },
+  { domain: domains[3], q: "What does APK stand for (Android)?", options:["Android Package","Apple Package","Application Pack","Advanced Package"], answer:"Android Package" },
+  { domain: domains[4], q: "Which language is widely used for statistical computing?", options:["R","HTML","CSS","SQL"], answer:"R" },
+  { domain: domains[5], q: "Which network device inspects packets and filters traffic?", options:["Switch","Firewall","Printer","Monitor"], answer:"Firewall" },
+  { domain: domains[6], q: "What is 'auto-scaling' in cloud computing?", options:["Manual VM creation","Automatic adjusting resources","Scaling images","Scaling fonts"], answer:"Automatic adjusting resources" },
+  { domain: domains[7], q: "Which term describes splitting data into many blocks across nodes?", options:["Sharding","Hashing","Chaining","Bundling"], answer:"Sharding" },
+  { domain: domains[8], q: "Which protocol is lightweight and ideal for constrained IoT devices?", options:["MQTT","SMTP","POP3","Telnet"], answer:"MQTT" },
+  { domain: domains[9], q: "In AR, overlaying digital content onto real world is called?", options:["Augmentation","Simulation","Segmentation","Compression"], answer:"Augmentation" },
+
+  // 41..50
+  { domain: domains[0], q: "Which technique allows an AI to learn from rewards?", options:["Supervised learning","Reinforcement learning","Clustering","Dimensionality reduction"], answer:"Reinforcement learning" },
+  { domain: domains[1], q: "What does 'unsupervised learning' do?", options:["Uses labeled data","Finds structure in unlabeled data","Tests user inputs","Compiles code"], answer:"Finds structure in unlabeled data" },
+  { domain: domains[2], q: "Which attribute makes an image responsive in HTML?", options:["width:100%","align:center","responsive=yes","image-size"], answer:"width:100%" },
+  { domain: domains[3], q: "Which cross-platform framework uses Dart?", options:["React Native","Flutter","Ionic","Xamarin"], answer:"Flutter" },
+  { domain: domains[4], q: "Which algorithm is used for association rule mining?", options:["Apriori","Dijkstra","KNN","Naive Bayes"], answer:"Apriori" },
+  { domain: domains[5], q: "What is 'SQL injection' an example of?", options:["Network optimization","Web application vulnerability","UI bug","Design pattern"], answer:"Web application vulnerability" },
+  { domain: domains[6], q: "Which cloud model is shared suite of applications online?", options:["IaaS","PaaS","SaaS","CaaS"], answer:"SaaS" },
+  { domain: domains[7], q: "Which blockchain element links to previous block?", options:["Nonce","Previous hash","Gas","Merkle root"], answer:"Previous hash" },
+  { domain: domains[8], q: "Which layer in IoT handles decision-making and analytics?", options:["Perception layer","Network layer","Application layer","Power layer"], answer:"Application layer" },
+  { domain: domains[9], q: "Which device renders VR graphics at high frame rates?", options:["GPU","Printer","Scanner","Router"], answer:"GPU" },
+
+  // 51..60
+  { domain: domains[0], q: "Which famous AI model family is 'GPT' part of?", options:["Generative models","Discriminative models","Clustering models","Dimensional models"], answer:"Generative models" },
+  { domain: domains[1], q: "Which optimizer accelerates neural network training (commonly)?", options:["Adam","KMeans","SVD","LDA"], answer:"Adam" },
+  { domain: domains[2], q: "Which is used to store client-side small pieces of data in the browser?", options:["Cookies","Server-side logs","Docker","VM"], answer:"Cookies" },
+  { domain: domains[3], q: "What is Gradle used for in Android?", options:["Dependency and build tool","Rendering engine","IDE","Database"], answer:"Dependency and build tool" },
+  { domain: domains[4], q: "Which method helps evaluate model generalization via subsets?", options:["Cross-validation","Gradient ascent","Normalization","LRU"], answer:"Cross-validation" },
+  { domain: domains[5], q: "What is 'zero-day' in cybersecurity?", options:["A day with zero attacks","A vulnerability unknown to vendor","A firewall feature","A backup routine"], answer:"A vulnerability unknown to vendor" },
+  { domain: domains[6], q: "Which tool is known for container orchestration in cloud?", options:["Docker Compose","Kubernetes","Vagrant","Chef"], answer:"Kubernetes" },
+  { domain: domains[7], q: "Which concept measures blockchain transaction cost on some platforms?", options:["Gas","Stakers","Blocks","Nodes"], answer:"Gas" },
+  { domain: domains[8], q: "Edge computing in IoT moves compute where?", options:["Central cloud only","Close to data sources/devices","To user's mobile device only","To printers"], answer:"Close to data sources/devices" },
+  { domain: domains[9], q: "Which API type is commonly used to render 3D for web VR/AR?", options:["WebGL","SOAP","SQL","REST"], answer:"WebGL" },
+
+  // 61..70
+  { domain: domains[0], q: "Which AI approach uses rule sets rather than learning from data?", options:["Expert systems","Deep learning","Reinforcement learning","Genetic algorithms"], answer:"Expert systems" },
+  { domain: domains[1], q: "Which algorithm is commonly used for dimensionality reduction?", options:["PCA","Naive Bayes","Decision Tree","SVM"], answer:"PCA" },
+  { domain: domains[2], q: "Which attribute adds semantic meaning to HTML sections?", options:["<section>","<div>","<span>","<b>"], answer:"<section>" },
+  { domain: domains[3], q: "Which pattern helps manage background tasks on mobile (Android)?", options:["Service","Intent","Fragment","Toast"], answer:"Service" },
+  { domain: domains[4], q: "Which library is used for interactive plotting in Python?", options:["Matplotlib","Spring","jQuery","Hibernate"], answer:"Matplotlib" },
+  { domain: domains[5], q: "Which cryptographic function provides data confidentiality?", options:["Encryption","Hashing","Logging","Compression"], answer:"Encryption" },
+  { domain: domains[6], q: "Which cloud concept isolates resources within a provider account?", options:["VPC","GitHub","DNS","SMTP"], answer:"VPC" },
+  { domain: domains[7], q: "What does 'decentralized' mean in blockchain context?", options:["Single server controls ledger","No single central authority","Central bank controls crypto","A single company owns chain"], answer:"No single central authority" },
+  { domain: domains[8], q: "Which actuator converts electrical signals to physical movement?", options:["Motor","Thermistor","Camera","Microphone"], answer:"Motor" },
+  { domain: domains[9], q: "Which term describes blending virtual objects into a real scene (AR)?", options:["Occlusion","Registration","Rasterization","Compilation"], answer:"Registration" },
+
+  // 71..80
+  { domain: domains[0], q: "Which tool/library is popular for building conversational AI?", options:["TensorFlow","Rasa","NumPy","MySQL"], answer:"Rasa" },
+  { domain: domains[1], q: "Which sampling method helps when labels are imbalanced?", options:["Oversampling minority class","Under-sampling majority","Both options","None"], answer:"Both options" },
+  { domain: domains[2], q: "Which meta tag controls mobile viewport rendering?", options:["<meta name='viewport'>","<meta charset>","<meta http-equiv>","<meta property>"], answer:"<meta name='viewport'>" },
+  { domain: domains[3], q: "Which file defines Android app layout in XML?", options:["layout resource file","AndroidManifest","build.gradle","MainActivity.java"], answer:"layout resource file" },
+  { domain: domains[4], q: "Which technique helps detect anomalies in data?", options:["Isolation Forest","Bubble Sort","Linear Regression","Bootstrap"], answer:"Isolation Forest" },
+  { domain: domains[5], q: "Which practice reduces attack surface for a web app?", options:["Minimize exposed endpoints","Add many open ports","Publish credentials","Use default passwords"], answer:"Minimize exposed endpoints" },
+  { domain: domains[6], q: "What is 'serverless' primarily about?", options:["No servers exist","Developers don't manage servers","Servers are faster","Servers are virtual"], answer:"Developers don't manage servers" },
+  { domain: domains[7], q: "Which data structure helps verify transactions inside a block?", options:["Merkle Tree","Binary Heap","Queue","Stack"], answer:"Merkle Tree" },
+  { domain: domains[8], q: "Which IoT term refers to device identity and secure onboarding?", options:["Provisioning","Rendering","Packaging","Compiling"], answer:"Provisioning" },
+  { domain: domains[9], q: "Which spatial audio feature improves immersion in VR?", options:["Binaural audio","Mono audio","Low bitrate audio","Text-to-speech"], answer:"Binaural audio" },
+
+  // 81..90
+  { domain: domains[0], q: "Which approach uses evolutionary strategies to optimize models?", options:["Genetic algorithms","Gradient descent","KNN","Decision Trees"], answer:"Genetic algorithms" },
+  { domain: domains[1], q: "Which kernel is used in SVM to handle non-linear data?", options:["Linear kernel only","RBF kernel","HTTP kernel","ZIP kernel"], answer:"RBF kernel" },
+  { domain: domains[2], q: "Which JS method adds an element at the end of an array?", options:["push()","pop()","shift()","slice()"], answer:"push()" },
+  { domain: domains[3], q: "Which UI language is used in iOS to declare views (SwiftUI)?", options:["SwiftUI DSL","Kotlin XML","XAML","HTML"], answer:"SwiftUI DSL" },
+  { domain: domains[4], q: "Which term describes transforming raw data into features?", options:["Feature engineering","Model serving","Compilation","Rendering"], answer:"Feature engineering" },
+  { domain: domains[5], q: "Which attack captures data by intercepting communications?", options:["Man-in-the-middle","DDoS","Phishing","Brute force"], answer:"Man-in-the-middle" },
+  { domain: domains[6], q: "Which cloud service helps host relational databases (AWS)?", options:["RDS","SQS","SNS","ECR"], answer:"RDS" },
+  { domain: domains[7], q: "Which property allows programmable rules on blockchain platforms?", options:["Smart contracts","Forks","Sharding","Nodes"], answer:"Smart contracts" },
+  { domain: domains[8], q: "Which wireless technology suits low-power wide-area IoT?", options:["LoRaWAN","Bluetooth Classic","USB","Ethernet"], answer:"LoRaWAN" },
+  { domain: domains[9], q: "Which technique reduces motion sickness in VR?", options:["Higher frame rates","Lower resolution","No audio","Random movement"], answer:"Higher frame rates" },
+
+  // 91..100
+  { domain: domains[0], q: "Which metric measures classification model's ability to separate classes?", options:["ROC AUC","PageRank","Throughput","Latency"], answer:"ROC AUC" },
+  { domain: domains[1], q: "Which method helps prevent gradient vanishing in deep nets?", options:["ReLU activation","Using loops","Decreasing data","Removing layers"], answer:"ReLU activation" },
+  { domain: domains[2], q: "Which language is used to style web pages?", options:["CSS","Python","SQL","C++"], answer:"CSS" },
+  { domain: domains[3], q: "Which architecture pattern separates UI and business logic on mobile?", options:["MVVM","Plain HTML","FTP","SOAP"], answer:"MVVM" },
+  { domain: domains[4], q: "Which database type is optimized for analytics and columnar storage?", options:["Columnar DB","Relational OLTP","Key-Value only","File System"], answer:"Columnar DB" },
+  { domain: domains[5], q: "Which practice regularly updates software to fix vulnerabilities?", options:["Patch management","Data backup only","Open ports","Default credentials"], answer:"Patch management" },
+  { domain: domains[6], q: "Which term describes billing by usage in cloud?", options:["Pay-as-you-go","Fixed subscription only","Free forever","Per-user license"], answer:"Pay-as-you-go" },
+  { domain: domains[7], q: "What is a 'fork' in blockchain?", options:["Network split into two chains","A physical tool","A performance metric","A wallet type"], answer:"Network split into two chains" },
+  { domain: domains[8], q: "Which IoT device commonly uses low-power microcontrollers?", options:["ESP32/ESP8266","High-end GPUs","Laser printers","Gaming consoles"], answer:"ESP32/ESP8266" },
+  { domain: domains[9], q: "Which system blends AR elements into the user's view on mobile?", options:["ARKit/ARCore","SMTP","FTP","POP3"], answer:"ARKit/ARCore" }
+];
+
+// Game state
+const TOTAL_LEVELS = levels.length; // 100
+let currentLevel = 0; // 0-based index for levels array
+let health = 100;
+const player = document.getElementById('player');
+const healthEl = document.getElementById('health');
+const healthText = document.getElementById('healthText');
+const domainLabel = document.getElementById('domainLabel');
+const levelLabel = document.getElementById('levelLabel');
+const questionText = document.getElementById('questionText');
+const optionsContainer = document.getElementById('optionsContainer');
+const feedback = document.getElementById('feedback');
+const progressText = document.getElementById('progressText');
+const restartBtn = document.getElementById('restartBtn');
+const nextBtn = document.getElementById('nextBtn');
+const skipBtn = document.getElementById('skipBtn');
+
+function updateHUD(){
+  const lvl = currentLevel + 1;
+  domainLabel.textContent = levels[currentLevel].domain;
+  levelLabel.textContent = `Level ${lvl} / ${TOTAL_LEVELS}`;
+  progressText.textContent = `Progress: ${lvl-1} completed • ${TOTAL_LEVELS - (lvl-1)} remaining`;
+  healthEl.style.width = health + "%";
+  healthText.textContent = `Health: ${health}%`;
+  if (health <= 40) {
+    healthEl.style.background = "linear-gradient(90deg,#f97316,#ef4444)";
+  } else {
+    healthEl.style.background = "linear-gradient(90deg,#10b981,#34d399)";
+  }
+}
+
+function renderLevel(){
+  updateHUD();
+  const item = levels[currentLevel];
+  questionText.textContent = `${item.q}`;
+  optionsContainer.innerHTML = '';
+  feedback.textContent = '';
+  // shuffle options for fairness
+  const opts = shuffleArray([...item.options]);
+  opts.forEach(optText=>{
+    const div = document.createElement('div');
+    div.className = 'opt';
+    div.textContent = optText;
+    div.onclick = ()=> handleAnswer(div, optText);
+    optionsContainer.appendChild(div);
+  });
+  movePlayerTo(currentLevel);
+  nextBtn.style.display = 'none';
+}
+
+function handleAnswer(div, chosen){
+  // disable further clicks until processed
+  const opts = document.querySelectorAll('.opt');
+  opts.forEach(o=> o.onclick = null);
+
+  const correct = levels[currentLevel].answer;
+  if (chosen === correct){
+    div.classList.add('correct');
+    feedback.textContent = "✅ Correct! Advancing to next level...";
+    // progress after small delay to let user see green highlight
+    setTimeout(()=> {
+      currentLevel++;
+      if (currentLevel >= TOTAL_LEVELS){
+        showVictory();
+      } else {
+        renderLevel();
+      }
+    }, 700);
+  } else {
+    div.classList.add('wrong');
+    feedback.textContent = "❌ Wrong — you lost 20% health. Try the same level again.";
+    // drain health
+    health -= 20;
+    if (health < 0) health = 0;
+    updateHUD();
+    // if health zero, game over
+    if (health === 0){
+      setTimeout(gameOver, 600);
+      return;
+    }
+    // re-enable options after small delay
+    setTimeout(()=>{
+      renderLevel(); // re-render same level so options reshuffle
+    }, 900);
+  }
+}
+
+function movePlayerTo(levelIndex){
+  // Place player proportionally across the area
+  // left: 8px at level 0 to (containerWidth - 8 - playerWidth) at final
+  // compute as percentage
+  const pct = (levelIndex / (TOTAL_LEVELS - 1)); // 0..1
+  const container = document.getElementById('game-area');
+  const containerWidth = container.clientWidth;
+  const playerWidth = player.clientWidth;
+  const minLeft = 8;
+  const maxLeft = containerWidth - playerWidth - 12;
+  const left = Math.round(minLeft + (maxLeft - minLeft) * pct);
+  player.style.left = left + 'px';
+}
+
+function showVictory(){
+  questionText.textContent = "🎉 Congratulations — You reached Level 100!";
+  optionsContainer.innerHTML = '';
+  feedback.textContent = `Final Health: ${health}% — You conquered the VibeCampus Adventure!`;
+  movePlayerTo(TOTAL_LEVELS - 1);
+  nextBtn.style.display = 'none';
+}
+
+function gameOver(){
+  questionText.textContent = "💀 Game Over — You lost all your health.";
+  optionsContainer.innerHTML = '';
+  feedback.textContent = "Press Restart to try again.";
+  // show player collapsed (visual cue)
+  player.style.transform = 'translateY(8px) rotate(-8deg) scale(.95)';
+}
+
+restartBtn.onclick = ()=>{
+  currentLevel = 0;
+  health = 100;
+  player.style.transform = 'none';
+  renderLevel();
+};
+
+skipBtn.onclick = ()=>{
+  // skipping not allowed — show a tip
+  feedback.textContent = "Skipping is disabled. Answer correctly to advance.";
+};
+
+function shuffleArray(arr){
+  for (let i = arr.length -1; i>0; i--){
+    const j = Math.floor(Math.random() * (i+1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// initial render
+renderLevel();
+
+// keyboard shortcuts: number keys to choose options 1..4
+document.addEventListener('keydown', (e)=>{
+  if (e.key >= '1' && e.key <= '9'){
+    const idx = Number(e.key) - 1;
+    const opts = document.querySelectorAll('.opt');
+    if (opts[idx]) opts[idx].click();
+  } else if (e.key === 'r' || e.key === 'R'){
+    restartBtn.click();
+  }
+});
+</script>
+</body>
+</html>

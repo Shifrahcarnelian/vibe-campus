@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>VibeCampus - Student Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="personalized-dashboard.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="dashboard-wrapper">
+  <div class="dashboard-header">
+    <h1>Welcome to VibeCampus 🎓</h1>
+    <p id="welcomeMessage"></p>
+  </div>
+  <div class="avatar-box">
+    <p><strong>Status:</strong> Learning Mode ⚡</p>
+  </div>
+  
+  
+  
+  
+
+  <div class="profile-card">
+    <img id="studentAvatar" class="profile-pic" src="" alt="Student Avatar" />
+    <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+    <p><strong>Preferred Domain:</strong> <span id="profileDomain"></span></p>
+    <p><strong>Login Time:</strong> <span id="loginTime"></span></p>
+  </div>
+  <h2 class="section-title">📌 Your Learning Tools</h2>
+  <div class="feature-grid">
+    <div class="card"><h3>📚 StudySpaces</h3><p>Join virtual study rooms and co-learn.</p></div>
+    <div class="card"><h3>🎯 <a href="notice.html">ClubSphere</a></h3><p>Explore club activities, events, and challenges.</p></div>
+    <div class="card"><h3>🔁 <a href="study.html">PeerBridge</a></h3><p>Get matched for tutoring or collaborative learning.</p></div>
+    <div class="card"><h3>👨‍💻 <a href="profile.html">Profile & Preferences</a></h3><p>Update your interests and learning style.</p></div>
+    <div class="card"><h3>⭐ Gamified Progress</h3><p>Earn badges and climb leaderboards.</p></div>
+    <div class="card"><h3>📝 <a href="feedback.html">Feedback & Growth</a></h3><p>Receive suggestions and track your progress.</p></div>
+  </div>
+
+  <button onclick="logout()">🔓 Logout</button>
+</div>
+
+<script>
+  window.onload = () => {
+    const email = localStorage.getItem("studentEmail") || "student@college.edu";
+    const domain = localStorage.getItem("studentDomain") || "Not Selected";
+    const loginTime = localStorage.getItem("loginTime") || new Date().toISOString();
+    
+  
+    document.getElementById("welcomeMessage").innerText = `Hello ${email.split('@')[0]}, ready to explore ${domain}?`;
+    document.getElementById("profileEmail").innerText = email;
+    document.getElementById("profileDomain").innerText = domain;
+    document.getElementById("loginTime").innerText = new Date(loginTime).toLocaleString();
+  
+    // Load avatar
+    const avatar = localStorage.getItem("studentAvatar");
+
+if (avatar) {
+  document.getElementById("studentAvatar").src = avatar;
+}
+
+  };
+  </script>
+  
+</body>
+</html>

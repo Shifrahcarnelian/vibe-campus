@@ -1,0 +1,222 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #f9fafb;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 1rem;
+    line-height: 1.6;
+    padding-top: 4rem;
+}
+
+.container {
+    width: 100%;
+    max-width: 28rem;
+}
+
+.card {
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 2rem 2rem 1rem;
+    text-align: center;
+}
+
+.icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    margin: 0 auto 1rem;
+    background-color: #dbeafe;
+    border-radius: 50%;
+}
+
+.mail-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: #2563eb;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 0.5rem;
+}
+
+.description {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.card-content {
+    padding: 0 2rem 2rem;
+}
+
+.form {
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+.input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.input::placeholder {
+    color: #9ca3af;
+}
+
+.submit-btn {
+    width: 100%;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.submit-btn:hover {
+    background-color: #1d4ed8;
+}
+
+.submit-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.back-link {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.back-to-signin {
+    display: inline-flex;
+    align-items: center;
+    color: #6b7280;
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: color 0.15s ease-in-out;
+}
+
+.back-to-signin:hover {
+    color: #111827;
+}
+
+.arrow-icon {
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+}
+
+.help-box {
+    background-color: #eff6ff;
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.help-text {
+    font-size: 0.875rem;
+    color: #1e40af;
+}
+
+.try-again-btn {
+    background: none;
+    border: none;
+    color: #1e40af;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: inherit;
+}
+
+.try-again-btn:hover {
+    text-decoration: none;
+}
+
+.footer-text {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.footer-text p {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.signin-link {
+    color: #2563eb;
+    text-decoration: underline;
+}
+
+.signin-link:hover {
+    color: #1d4ed8;
+}
+
+@media (max-width: 640px) {
+    .container {
+        padding: 0.5rem;
+    }
+    
+    .card-header {
+        padding: 1.5rem 1.5rem 1rem;
+    }
+    
+    .card-content {
+        padding: 0 1.5rem 1.5rem;
+    }
+    
+    .title {
+        font-size: 1.25rem;
+    }
+}
+
+.submit-btn:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.input:invalid:not(:focus):not(:placeholder-shown) {
+    border-color: #ef4444;
+}
+
+.input:valid:not(:focus):not(:placeholder-shown) {
+    border-color: #10b981;
+}
